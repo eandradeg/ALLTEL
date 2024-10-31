@@ -18,15 +18,19 @@ class ClientBase(BaseModel):
     correo: str
     fecha_de_inscripcion: str
     estado: str
+    
 
-class ClientCreate(ClientBase):
-    pass
 
+class ClientCreate(BaseModel):
+    nombres:str
+    correo:str
+    telefono:str
+    
 class Client(ClientBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class ReclamationBase(BaseModel):
     item: str
@@ -51,7 +55,7 @@ class Reclamation(ReclamationBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class RepairTimeBase(BaseModel):
     item: str
@@ -75,7 +79,7 @@ class RepairTime(RepairTimeBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class AdministratorBase(BaseModel):
     usuario: str
@@ -88,7 +92,7 @@ class Administrator(AdministratorBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class Token(BaseModel):
     access_token: str

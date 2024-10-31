@@ -1,14 +1,23 @@
 from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from . import models, schemas, auth
-from .database import engine, get_db
+import models, schemas, auth
+from database import engine, get_db
 from datetime import timedelta
 from typing import List
 
-models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+# Configurar CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permite todos los orígenes
+    allow_credentials=True,
+    allow_methods=["*"],  # Permite todos los métodos
+    allow_headers=["*"],  # Permite todos los headers
+)
 
 @app.post("/token", response_model=schemas.Token)
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
@@ -35,6 +44,14 @@ def read_clients(skip: int = 0, limit: int = 100, db: Session = Depends(get_db))
     clients = db.query(models.Client).offset(skip).limit(limit).all()
     return clients
 
+@app.post("/clients/", response_model=schemas.Client)
+def create_client(client: schemas.ClientCreate, db: Session = Depends(get_db)):
+    db_client = models.Client(**client.dict())
+    db.add(db_client)
+    db.commit()
+    db.refresh(db_client)
+    return db_client
+ 
 @app.get("/reclamations/", response_model=List[schemas.Reclamation])
 def read_reclamations(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     reclamations = db.query(models.Reclamation).offset(skip).limit(limit).all()
