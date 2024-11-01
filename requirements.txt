@@ -8,6 +8,6 @@ openpyxl==3.0.9
 plotly-express==0.4.1
 protobuf==3.20.0
 python-dotenv==1.0.1
-python-jose==3.3.0
+psycopg2-binary==2.9.10
 passlib==1.7.4
 python-multipart==0.0.16
